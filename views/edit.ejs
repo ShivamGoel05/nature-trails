@@ -1,0 +1,84 @@
+<% layout('layouts/boilerplate') %> 
+<style>
+    body {
+        background-color: #fff1e6;
+    }
+</style>
+<div class="row">
+    <div class="col-6 offset-3">
+        <section class="container mb-3 shadow" style="border: 2px solid black;">
+            <div class="row">
+                <h1 class="text-center">Editting</h1>
+                <hr>
+            </div>
+            <form action="/campgrounds/<%= campground._id %>" method="post" class="needs-validation" novalidate enctype="multipart/form-data" onsubmit="return checkFileSize()">
+                <div class="row mb-3">
+                    <div class="col">
+                        <label for="title">Title:</label>
+                        <textarea class="form-control" name="title" id="title" cols="63" rows="1" style="resize: none" required><%= campground.title %></textarea>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col">
+                        <label for="location">Location:</label>
+                        <textarea class="form-control" name="location" id="location" cols="63" rows="1" style="resize: none" required><%= campground.location %></textarea>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col">
+                        <label for="price">Price:</label>
+                        <input class="form-control" type="number" value=<%= campground.price %> name="price" id="price" required oninput="validity.valid||(value=''); if(value < 0) value = '';">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col">
+                        <label for="description">Description:</label>
+                        <textarea class="form-control" name="description" id="description" cols="63" rows="1" style="resize: none" required><%= campground.description %></textarea>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col">
+                        <label for="image">Add Images:</label>
+                        <input class="form-control" type="file" name="image" id="image" multiple accept="image/*">
+                        <span id="fileSizeError" style="color: red;"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <% campground.images.forEach(function(img, i) { %>
+                        <img src="<%= img.url.replace('/upload/', '/upload/w_200/') %>" class="img-thumbnail mb-3" alt="">
+                        <div class="form-check-inline mb-3">
+                            <input class="form-check-input" type="checkbox" name="deleteImages[]" id="image-<%= i %>" value="<%= img.filename %>">
+                            <label class="form-check-label" for="image-<%= i %>">Delete</label>
+                        </div>
+                        <% }) %>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col">
+                        <button type="submit" class="btn btn-success">Update</button>
+                        <a href="/campgrounds/<%= campground._id %>"><button class="btn btn-danger mx-3" type="button">Cancel</button></a>
+                    </div>
+                </div>
+            </form>
+        </section>
+    </div>
+</div>
+<script>
+    function checkFileSize() {
+        var input = document.getElementById('image');
+        var files = input.files;
+        var maxSize = 5 * 1024 * 1024; // 5 MB in bytes
+    
+        for (var i = 0; i < files.length; i++) {
+            if (files[i].size > maxSize) {
+                document.getElementById('fileSizeError').innerText = 'Each file should be less than 3 MB';
+                return false;
+            }
+        }
+        return true;
+    }
+    document.getElementById('image').addEventListener('change', function() {
+        document.getElementById('fileSizeError').innerText = '';
+    });
+</script>

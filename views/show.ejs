@@ -1,0 +1,122 @@
+<% layout('layouts/boilerplate') %>
+<style>
+   body {
+   background-color: #fff1e6;
+   }
+</style>
+<link rel="stylesheet" href="/starability.css">
+<div class="mb-4" id='map' style='height: 300px;'></div>
+<div class="card mb-4">
+   <div class="row">
+      <div class="col-md-4">
+         <% if (campground.images.length) { %>
+         <div class="d-flex align-items-stretch h-100">
+            <div id="carouselExampleControls" class="carousel slide w-100" data-bs-ride="carousel">
+               <div class="carousel-inner h-100">
+                  <% campground.images.forEach((img, i) => { %>
+                  <div class="carousel-item <%= i === 0 ? 'active' : '' %> h-100">
+                     <img src="<%= img.url %>" class="d-block w-100 h-100" style="object-fit: cover;" alt="">
+                  </div>
+                  <% }) %>
+               </div>
+               <% if (campground.images.length > 1) { %>
+               <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+               <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+               <span class="visually-hidden">Previous</span>
+               </button>
+               <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+               <span class="carousel-control-next-icon" aria-hidden="true"></span>
+               <span class="visually-hidden">Next</span>
+               </button>
+               <% } %>
+            </div>
+         </div>
+         <% } else { %>
+         <img src="/no_image.jpeg" class="w-100 h-100 card-img-top" alt="">
+         <% } %>
+      </div>
+      <div class="col-md-8">
+         <div class="card-body">
+            <h3 class="card-title"><%= campground.title %></h3>
+            <p class="card-text text-muted"><span class="text-success">Location: </span><%= campground.location %></p>
+            <h5 class="card-text"><span class="text-danger">Price: </span>$<%= campground.price %></h5>
+            <p class="card-text">
+            <div class="text-primary">Description: </div>
+            <%= campground.description %></p>
+            <p class="card-text text-muted"><span class="text-primary">Submitted by: </span><%= campground.author.username %></p>
+            <% if (user && campground.author.equals(user._id)) { %>
+            <a href="/campgrounds/<%= campground._id %>/edit"><button class="btn btn-warning">Edit</button></a>
+            <a href="/campgrounds/<%= campground._id %>/delete"><button class="btn btn-danger mx-3">Delete</button></a>
+            <br> <br>
+            <% } %>
+            <a href="/campgrounds"><button class="btn btn-primary">View All Campgrounds</button></a>
+         </div>
+      </div>
+   </div>
+</div>
+<% if (user) { %>
+<h3>Leave a Review</h3>
+<hr>
+<form action="/campgrounds/<%= campground._id %>/reviews" method="post" class="mb-4 needs-validation" novalidate>
+   <div class="mb-3">
+      <textarea class="form-control" placeholder="type here" name="body" id="body" cols="30" rows="3" required></textarea>
+   </div>
+   <div>
+      <fieldset class="starability-basic">
+         <input type="radio" id="no-rate" class="input-no-rate" name="rating" value="0" checked aria-label="No rating." />
+         <input type="radio" id="first-rate1" name="rating" value="1" />
+         <label for="first-rate1" title="Terrible">1 star</label>
+         <input type="radio" id="first-rate2" name="rating" value="2" />
+         <label for="first-rate2" title="Not good">2 stars</label>
+         <input type="radio" id="first-rate3" name="rating" value="3" />
+         <label for="first-rate3" title="Average">3 stars</label>
+         <input type="radio" id="first-rate4" name="rating" value="4" />
+         <label for="first-rate4" title="Very good">4 stars</label>
+         <input type="radio" id="first-rate5" name="rating" value="5" />
+         <label for="first-rate5" title="Amazing">5 stars</label>
+      </fieldset>
+   </div>
+   <button class="btn btn-info">Submit Review</button>
+</form>
+<% } %>
+<% if (campground.reviews.length != 0) { %>
+<h3>Reviews</h3>
+<hr>
+<% } %>
+<% campground.reviews.reverse().forEach(review => { %>
+<div class="card mb-3">
+   <div class="card-body">
+      <h5 class="card-title"><%= review.body %></h5>
+      <p class="starability-result" data-rating=<%= review.rating %>></p>
+      <p class="card-text">Posted by: <%= review.author.username %></p>
+      <% if (user && review.author.equals(user._id)) { %>
+      <form action="/campgrounds/<%= campground._id %>/reviews/<%= review._id %>?_method=delete" method="post">
+         <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+      </form>
+      <% } %>
+   </div>
+</div>
+<% }) %>
+<script>
+   const mapToken = '<%-process.env.MAPBOX_TOKEN%>';
+   const campground = <%- JSON.stringify(campground) %>;
+   mapboxgl.accessToken = mapToken;
+   const map = new mapboxgl.Map({
+       container: 'map', // container ID
+       style: 'mapbox://styles/mapbox/streets-v12', // style URL
+       center: campground.geometry.coordinates, // starting position [lng, lat]
+       zoom: 12, // starting zoom
+   });
+
+   map.addControl(new mapboxgl.NavigationControl(), 'bottom-right');
+   
+   new mapboxgl.Marker()
+       .setLngLat(campground.geometry.coordinates)
+       .setPopup(
+           new mapboxgl.Popup({offset: 25})
+               .setHTML(
+                   `<h3>${campground.title}</h3>`
+               )
+       )
+       .addTo(map);
+</script>

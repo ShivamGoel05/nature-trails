@@ -1,0 +1,12 @@
+<% layout('layouts/boilerplate') %> 
+<style>
+    body {
+        background-color: #fff1e6;
+    }
+</style>
+<h2>Are you sure you want to delete this campground?</h2>
+<hr>
+<form action="/campgrounds/<%= id %>?_method=delete" style="display: inline" method="post">
+    <button type="submit" class="btn btn-danger">Yes</button>
+</form>
+<a href="/campgrounds/<%= id %>"><button class="btn btn-success mx-3">No</button></a>

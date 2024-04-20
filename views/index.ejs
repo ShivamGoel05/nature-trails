@@ -1,0 +1,81 @@
+<% layout('layouts/boilerplate') %>
+<style>
+    body {
+        background-color: #f0dbca;
+    }
+</style>
+<div class="mb-3" id='map' style='height: 300px;'></div>
+<div class="row">
+    <div class="col">
+        <h1>Campgrounds</h1>
+    </div>
+    <div class="col align-self-center text-end">
+        <span>
+            <button class="btn btn-primary" id="scrollDown">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                    class="bi bi-arrow-down" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd"
+                        d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z" />
+                </svg>
+            </button>
+        </span>
+    </div>
+</div>
+<hr>
+<% let i=1; %>
+<% for (let campground of campgrounds) { %>
+<div class="card mb-3">
+    <div class="row">
+        <div class="col-md-4">
+            <% if (campground.images.length) { %>
+            <img src="<%= campground.images[0].url %>" class="w-100 h-100 card-img-top" alt="">
+            <% } else { %>
+            <img src="/no_image.jpeg" class="w-100 h-100 card-img-top" alt="">
+            <% } %>
+        </div>
+        <div class="col-md-8">
+            <div class="card-body">
+                <h3 class="card-title">
+                    <%= i %><%= '. ' + campground.title %>
+                </h3>
+                <p class="card-text text-muted">
+                    <%= campground.location %>
+                </p>
+                <h5 class="card-text mb-5">
+                    $<%= campground.price %>
+                </h5>
+                <a href="/campgrounds/<%= campground._id %>" class="btn btn-info mt-5">Details</a>
+            </div>
+        </div>
+    </div>
+</div>
+<% i++; %>
+<% } %>
+<div class="row mb-3">
+    <div class="col align-self-center text-end">
+        <span>
+            <button class="btn btn-primary" id="scrollUp">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                    class="bi bi-arrow-up" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd"
+                        d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z" />
+                </svg>
+            </button>
+        </span>
+    </div>
+</div>
+<script>
+    const mapToken = '<%-process.env.MAPBOX_TOKEN%>';
+    const campgrounds = {features: <%- JSON.stringify(campgrounds) %>};
+</script>
+<script src="/clusterMap.js"></script>
+<script>
+    document.querySelector("#scrollDown").addEventListener('click', () => {
+        window.scrollTo(0, document.body.scrollHeight);
+    });
+</script>
+<script>
+    document.querySelector("#scrollUp").addEventListener('click', () => {
+        window.scrollTo(0, 0);
+    });
+</script>

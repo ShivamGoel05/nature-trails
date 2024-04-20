@@ -1,0 +1,42 @@
+<% layout('layouts/boilerplate') %> 
+<style>
+    body {
+        background-color: #fff1e6;
+    }
+</style>
+<div class="row">
+    <div class="col-6 offset-3">
+        <section class="container mb-3 shadow" style="border: 2px solid black;">
+            <div class="row">
+                <h1 class="text-center">Register</h1>
+                <hr>
+            </div>
+            <form action="/register" method="post" class="needs-validation" novalidate>
+                <div class="row mb-3">
+                    <div class="col">
+                        <label for="username">Username:</label>
+                        <input class="form-control" type="text" placeholder="username" name="username" id="username" required>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col">
+                        <label for="email">Email:</label>
+                        <input class="form-control" type="email" placeholder="email" name="email" id="email" required>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col">
+                        <label for="password">Password:</label>
+                        <input class="form-control" type="password" placeholder="password" name="password" id="password" required>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col">
+                        <button type="submit" class="btn btn-success">Register</button>
+                        <a href="/campgrounds"><button type="button" class="btn btn-danger mx-3">Cancel</button></a>
+                    </div>
+                </div>
+            </form>
+        </section>
+    </div>
+</div>
