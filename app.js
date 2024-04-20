@@ -33,8 +33,9 @@ app.use(methodOverride('_method'));
 app.use(express.static('public'));
 app.use(mongoSanitize());
 
-// const dbUrl = process.env.DB_URL;
-mongoose.connect('mongodb://localhost:27017/YelpCamp')
+const dbUrl = process.env.DB_URL;
+// 'mongodb://localhost:27017/YelpCamp'
+mongoose.connect(dbUrl)
     .then(() => {
         console.log('Express App Successfully Connected with MongoDB');
     })
@@ -43,7 +44,7 @@ mongoose.connect('mongodb://localhost:27017/YelpCamp')
     })
 
 const store = new MongoStore({
-    url: 'mongodb://localhost:27017/YelpCamp',
+    url: dbUrl,
     secret: 'thisshouldbeabettersecret!',
     touchAfter: 24 * 60 * 60
 });
