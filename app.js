@@ -155,6 +155,9 @@ app.post('/campgrounds/:id', upload.array('image'), async (req, res) => {
             query: req.body.location,
             limit: 1
         }).send();
+        if (!geoData || !geoData.body.features || geoData.body.features.length === 0) {
+            throw new Error('Invalid Location');
+        }
         const { id } = req.params;
         const { title, location, price, description } = req.body;
         const campground = await Campground.findByIdAndUpdate({ _id: id }, { title, location, price, description });
