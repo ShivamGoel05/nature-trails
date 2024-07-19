@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="images/homepage.png" width="650" height="500" /> 
+    <img src="images/homepage.png" width="700" height="450" /> 
 </p>
 
 Check it out: [Click here](https://naturetrails.onrender.com/)
